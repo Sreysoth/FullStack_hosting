@@ -5,16 +5,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $category = Category::all();
-        return response()->json($categories);    
+        $search = $request->input('search', '');
+        $limit = $request->input('limit', 10);
+
+        //==== dynamic ====
+        $sortBy = $request->input('sortBy', 'created_at');
+        $sortDir = $request->input('sortDir', 'desc');
+
+        $category = Category::withCount('menuItems')
+            ->when($search, function($query, $search){
+                return $query->where('name', 'LIKE', "%{$search}%");
+            })
+            ->orderBy($sortBy, $sortDir)
+            ->paginate($limit)
+            ;
+        return $category; 
         
     }
 
