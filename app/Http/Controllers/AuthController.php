@@ -60,7 +60,6 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
-
         try {
             $user = User::where('email', $data['email'])->first();
             if (!$user || !Hash::check($data['password'], $user->password)) {
@@ -69,7 +68,6 @@ class AuthController extends Controller
                     'message' => 'Invalid email or password',
                 ], 401);
             }
-
             $token = $user->createToken('auth_token')->plainTextToken;
             return response()->json([
                 'success' => true,

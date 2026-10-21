@@ -14,21 +14,8 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->input('search', '');
-        $limit = $request->input('limit', 10);
-
-        //==== dynamic ====
-        $sortBy = $request->input('sortBy', 'created_at');
-        $sortDir = $request->input('sortDir', 'desc');
-
-        $category = Category::withCount('menuItems')
-            ->when($search, function($query, $search){
-                return $query->where('name', 'LIKE', "%{$search}%");
-            })
-            ->orderBy($sortBy, $sortDir)
-            ->paginate($limit)
-            ;
-        return $category; 
+        $category = Category::all();
+        return $category;    
         
     }
 
